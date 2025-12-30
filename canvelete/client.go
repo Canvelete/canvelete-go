@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	defaultBaseURL = "https://www.canvelete.com"
+	defaultBaseURL = "https://api.canvelete.com"
 	defaultTimeout = 30 * time.Second
 	sdkVersion     = "2.0.0"
 )

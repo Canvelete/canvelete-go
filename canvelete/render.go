@@ -14,16 +14,18 @@ type RenderService struct {
 
 // RenderRequest is the request to render a design
 type RenderRequest struct {
-	DesignID    string                 `json:"designId,omitempty"`
-	TemplateID  string                 `json:"templateId,omitempty"`
-	DynamicData map[string]interface{} `json:"dynamicData,omitempty"`
-	Format      string                 `json:"format"` // png, jpg, jpeg, pdf, svg
-	Width       int                    `json:"width,omitempty"`
-	Height      int                    `json:"height,omitempty"`
-	Quality     int                    `json:"quality,omitempty"`
+	DesignID        string                 `json:"designId,omitempty"`
+	TemplateID      string                 `json:"templateId,omitempty"`
+	DynamicData     map[string]interface{} `json:"dynamicData,omitempty"`
+	DynamicElements map[string]interface{} `json:"dynamicElements,omitempty"`
+	Format          string                 `json:"format"` // png, jpg, jpeg, pdf, svg
+	Width           int                    `json:"width,omitempty"`
+	Height          int                    `json:"height,omitempty"`
+	Quality         int                    `json:"quality,omitempty"`
 }
 
 // Create renders a design or template to an image/PDF
+// Uses the backend API directly at /api/v1/render
 func (s *RenderService) Create(ctx context.Context, req *RenderRequest) ([]byte, error) {
 	if req.DesignID == "" && req.TemplateID == "" {
 		return nil, fmt.Errorf("either DesignID or TemplateID is required")
@@ -37,7 +39,7 @@ func (s *RenderService) Create(ctx context.Context, req *RenderRequest) ([]byte,
 		req.Quality = 90
 	}
 	
-	return s.client.requestBinary(ctx, "POST", "/api/automation/render", req)
+	return s.client.requestBinary(ctx, "POST", "/api/v1/render", req)
 }
 
 // CreateAndSave renders a design and saves it to a file
@@ -191,7 +193,7 @@ type RenderListOptions struct {
 
 // List returns a list of render history
 func (s *RenderService) List(ctx context.Context, opts *RenderListOptions) (*RenderHistoryResponse, error) {
-	endpoint := "/api/automation/render"
+	endpoint := "/api/v1/render/history"
 	
 	if opts != nil {
 		page := opts.Page
